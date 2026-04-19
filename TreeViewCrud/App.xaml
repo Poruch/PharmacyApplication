@@ -1,0 +1,12 @@
+﻿<Application
+    x:Class="TreeViewCrud.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:TreeViewCrud"
+    StartupUri="Views/MainWindow.xaml">
+    <Application.Resources>
+        <!--  Общие ресурсы приложения  -->
+        <SolidColorBrush x:Key="PrimaryColor" Color="#3F51B5" />
+        <SolidColorBrush x:Key="AccentColor" Color="DarkOrange " />
+    </Application.Resources>
+</Application>

@@ -1,0 +1,77 @@
+﻿<Window x:Class="TreeViewCrud.Views.CourseWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TreeViewCrud.Views"
+        mc:Ignorable="d"
+        Title="{Binding Title, RelativeSource={RelativeSource Self}}"
+        Height="450" Width="450"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Background="#F0F0F0"
+        x:Name="CourseWindowControl">
+
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Заголовок -->
+        <TextBlock Grid.Row="0" Text="{Binding Title, ElementName=CourseWindowControl}"
+                   FontSize="18" FontWeight="Bold"
+                   HorizontalAlignment="Center" Margin="0,0,0,20"/>
+
+        <!-- Поле Название курса -->
+        <StackPanel Grid.Row="1" Margin="0,5">
+            <TextBlock Text="Название курса:" FontWeight="Bold"/>
+            <TextBox x:Name="txtName"
+                     Text="{Binding CourseName, ElementName=CourseWindowControl, UpdateSourceTrigger=PropertyChanged}"
+                     Height="30" Margin="0,5,0,0" Padding="5"/>
+        </StackPanel>
+
+        <!-- Поле Преподаватель -->
+        <StackPanel Grid.Row="2" Margin="0,5">
+            <TextBlock Text="Преподаватель:" FontWeight="Bold"/>
+            <TextBox x:Name="txtTeacher"
+                     Text="{Binding CourseTeacher, ElementName=CourseWindowControl, UpdateSourceTrigger=PropertyChanged}"
+                     Height="30" Margin="0,5,0,0" Padding="5"/>
+        </StackPanel>
+
+        <!-- Поле Кредиты -->
+        <StackPanel Grid.Row="3" Margin="0,5">
+            <TextBlock Text="Количество кредитов (1-10):" FontWeight="Bold"/>
+            <TextBox x:Name="txtCredits"
+                     Text="{Binding CourseCredits, ElementName=CourseWindowControl, UpdateSourceTrigger=PropertyChanged}"
+                     Height="30" Margin="0,5,0,0" Padding="5"/>
+        </StackPanel>
+
+        <!-- Панель ошибок -->
+        <Border Grid.Row="4" Background="#FFE0E0" BorderBrush="Red"
+                BorderThickness="1" CornerRadius="3" Padding="5" Margin="0,10,0,0">
+            <TextBlock x:Name="txtError"
+                       Text="Все поля должны быть заполнены"
+                       Foreground="Red"
+                       TextWrapping="Wrap"/>
+        </Border>
+
+        <!-- Кнопки Сохранить/Отмена -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+            <Button Content="Сохранить"
+                    Width="100" Height="35"
+                    Margin="10" Click="BtnSave_Click"
+                    Background="LightGreen" FontSize="14"
+                    IsEnabled="{Binding CanSave, ElementName=CourseWindowControl}"/>
+
+            <Button Content="Отмена"
+                    Width="100" Height="35"
+                    Margin="10" Click="BtnCancel_Click"
+                    Background="LightGray" FontSize="14"/>
+        </StackPanel>
+    </Grid>
+</Window>
