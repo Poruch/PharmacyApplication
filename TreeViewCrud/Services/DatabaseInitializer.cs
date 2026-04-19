@@ -54,7 +54,7 @@ public static class DatabaseInitializer
                             );
                         END
 
-                        -- 4. Таблица пользователей (теперь AppUser)
+                        -- 4. Таблица пользователей 
                         IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'AppUser')
                         BEGIN
                             CREATE TABLE AppUser (

@@ -1,17 +1,20 @@
 ﻿
+using System.Collections.ObjectModel;
+using TreeViewCrud.Attributes;
 namespace TreeViewCrud.Models;
+[Table("Category")]
 public class Category : EntityBase
 {
     private int _categoryId;
     private string _name = null!;
     private string? _description;
-
+    public virtual ObservableCollection<Item> Items { get; set; } = new();
     public int CategoryId
     {
         get => _categoryId;
         set => _categoryId = value;
     }
-
+    [Column("Name")]
     public string Name
     {
         get => _name;
@@ -22,7 +25,7 @@ public class Category : EntityBase
             _name = value;
         }
     }
-
+    [Column("Description")]
     public string? Description
     {
         get => _description;

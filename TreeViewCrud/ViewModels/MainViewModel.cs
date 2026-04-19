@@ -54,7 +54,15 @@ public class MainViewModel : ViewModelBase
 
     public MainViewModel()
     {
-        _dataService = new DataService();
+        try
+        {
+            _dataService = new DataService();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Ошибка инициализации: {ex.Message}\n{ex.InnerException?.Message}");
+            throw;
+        }
 
         AddCategoryCommand = new RelayCommand(AddCategory, _ => true);
         AddItemCommand = new RelayCommand(AddItem, CanAddItem);
@@ -103,114 +111,105 @@ public class MainViewModel : ViewModelBase
             OnPropertyChanged(nameof(Categories));
         }
     }
-}
 
-private void AddBatch(object parameter)
-{
-    var item = SelectedItem as Item;
-    var window = new BatchWindow(item.Id)
-    {
-        Owner = Application.Current.MainWindow,
-        Title = "Добавление партии"
-    };
-    if (window.ShowDialog() == true)
-    {
-        var newBatch = new Batch
-        {
-            SerialNumber = window.BatchSerialNumber,
-            ProductionDate = window.BatchProductionDate.Value,
-            ExpiryDate = window.BatchExpiryDate,
-            PurchasePrice = window.BatchPurchasePrice,
-            SellingPrice = window.BatchSellingPrice,
-            Quantity = window.BatchQuantity,
-            ItemId = item.Id
-        };
-        _dataService.AddBatch(newBatch);
-        item.Batches ??= new ObservableCollection<Batch>();
-        item.Batches.Add(newBatch);
-        OnPropertyChanged(nameof(Categories));
-        OnPropertyChanged(nameof(SelectedItemInfo));
-    }
-}
 
-private void Edit(object parameter)
-{
-    if (SelectedItem is Item item)
+    private void AddBatch(object parameter)
     {
-        var window = new ItemWindow(item.Name, item.MnfName, item.Dosage, item.Form,
-                                    item.PrescriptionRequired, item.CategoryId)
-        {
-            Owner = Application.Current.MainWindow,
-            Title = "Редактирование товара"
-        };
+        var item = SelectedItem as Item;
+        var window = new BatchWindow(item.Id) { Owner = Application.Current.MainWindow };
         if (window.ShowDialog() == true)
         {
-            item.Name = window.ItemName;
-            item.MnfName = window.ItemMnfName;
-            item.Dosage = window.ItemDosage;
-            item.Form = window.ItemForm;
-            item.PrescriptionRequired = window.ItemPrescriptionRequired;
-            _dataService.UpdateItem(item);
-            OnPropertyChanged(nameof(SelectedItemInfo));
-        }
-    }
-    else if (SelectedItem is Batch batch)
-    {
-        var window = new BatchWindow(batch.SerialNumber, batch.ProductionDate, batch.ExpiryDate,
-                                     batch.PurchasePrice, batch.SellingPrice, batch.Quantity,
-                                     batch.ItemId)
-        {
-            Owner = Application.Current.MainWindow,
-            Title = "Редактирование партии"
-        };
-        if (window.ShowDialog() == true)
-        {
-            batch.SerialNumber = window.BatchSerialNumber;
-            batch.ProductionDate = window.BatchProductionDate.Value;
-            batch.ExpiryDate = window.BatchExpiryDate;
-            batch.PurchasePrice = window.BatchPurchasePrice;
-            batch.SellingPrice = window.BatchSellingPrice;
-            batch.Quantity = window.BatchQuantity;
-            _dataService.UpdateBatch(batch);
-            OnPropertyChanged(nameof(SelectedItemInfo));
-        }
-    }
-}
-
-private void Delete(object parameter)
-{
-    if (SelectedItem is Item item)
-    {
-        if (MessageBox.Show($"Удалить товар '{item.Name}'?", "Подтверждение",
-                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
-        {
-            _dataService.DeleteItem(item);
-            // удаляем из коллекции категории
-            var category = Categories.FirstOrDefault(c => c.Id == item.CategoryId);
-            category?.Items?.Remove(item);
-            if (SelectedItem == item) SelectedItem = null;
+            var newBatch = new Batch
+            {
+                SerialNumber = window.BatchSerialNumber,
+                ProductionDate = window.BatchProductionDate.Value,
+                ExpiryDate = window.BatchExpiryDate,
+                PurchasePrice = window.BatchPurchasePrice,
+                SellingPrice = window.BatchSellingPrice,
+                Quantity = window.BatchQuantity,
+                ItemId = window.ItemId
+            };
+            _dataService.AddBatch(newBatch);
+            item.Batches ??= new ObservableCollection<Batch>();
+            item.Batches.Add(newBatch);
             OnPropertyChanged(nameof(Categories));
         }
     }
-    else if (SelectedItem is Batch batch)
+
+    private void Edit(object parameter)
     {
-        if (MessageBox.Show($"Удалить партию '{batch.SerialNumber}'?", "Подтверждение",
-                            MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+        if (SelectedItem is Item item)
         {
-            _dataService.DeleteBatch(batch);
-            var item = Categories.SelectMany(c => c.Items).FirstOrDefault(i => i.Id == batch.ItemId);
-            item?.Batches?.Remove(batch);
-            if (SelectedItem == batch) SelectedItem = null;
-            OnPropertyChanged(nameof(Categories));
+            var window = new ItemWindow(item.Name, item.MnfName, item.Dosage, item.Form, item.PrescriptionRequired)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            if (window.ShowDialog() == true)
+            {
+                item.Name = window.ItemName;
+                item.MnfName = window.ItemMnfName;
+                item.Dosage = window.ItemDosage;
+                item.Form = window.ItemForm;
+                item.PrescriptionRequired = window.ItemPrescriptionRequired;
+                _dataService.UpdateItem(item);
+                OnPropertyChanged(nameof(SelectedItemInfo));
+            }
+        }
+        if (SelectedItem is Batch batch)
+        {
+            var window = new BatchWindow(batch.SerialNumber, batch.ProductionDate, batch.ExpiryDate,
+                                         batch.PurchasePrice, batch.SellingPrice, batch.Quantity)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            if (window.ShowDialog() == true)
+            {
+                batch.SerialNumber = window.BatchSerialNumber;
+                batch.ProductionDate = window.BatchProductionDate.Value;
+                batch.ExpiryDate = window.BatchExpiryDate;
+                batch.PurchasePrice = window.BatchPurchasePrice;
+                batch.SellingPrice = window.BatchSellingPrice;
+                batch.Quantity = window.BatchQuantity;
+                _dataService.UpdateBatch(batch);
+                OnPropertyChanged(nameof(SelectedItemInfo));
+            }
         }
     }
-}
 
-private void UpdateCommands()
-{
-    AddItemCommand.RaiseCanExecuteChanged();
-    AddBatchCommand.RaiseCanExecuteChanged();
-    EditCommand.RaiseCanExecuteChanged();
-    DeleteCommand.RaiseCanExecuteChanged();
-}
+    private void Delete(object parameter)
+    {
+        if (SelectedItem is Item item)
+        {
+            if (MessageBox.Show($"Удалить товар '{item.Name}'?", "Подтверждение",
+                                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                _dataService.DeleteItem(item);
+                // удаляем из коллекции категории
+                var category = Categories.FirstOrDefault(c => c.Id == item.CategoryId);
+                category?.Items?.Remove(item);
+                if (SelectedItem == item) SelectedItem = null;
+                OnPropertyChanged(nameof(Categories));
+            }
+        }
+        else if (SelectedItem is Batch batch)
+        {
+            if (MessageBox.Show($"Удалить партию '{batch.SerialNumber}'?", "Подтверждение",
+                                MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                _dataService.DeleteBatch(batch);
+                var itemb = Categories.SelectMany(c => c.Items).FirstOrDefault(i => i.Id == batch.ItemId);
+                itemb?.Batches?.Remove(batch);
+                if (SelectedItem == batch) SelectedItem = null;
+                OnPropertyChanged(nameof(Categories));
+            }
+        }
+    }
+
+    private void UpdateCommands()
+    {
+        AddItemCommand.RaiseCanExecuteChanged();
+        AddBatchCommand.RaiseCanExecuteChanged();
+        EditCommand.RaiseCanExecuteChanged();
+        DeleteCommand.RaiseCanExecuteChanged();
+    }
 }

@@ -26,6 +26,21 @@ namespace TreeViewCrud.Services
             Categories = new ObservableCollection<Category>(_repo.GetAll<Category>());
             Items = new ObservableCollection<Item>(_repo.GetAll<Item>());
             Batches = new ObservableCollection<Batch>(_repo.GetAll<Batch>());
+
+            // Связываем Items с категориями
+            foreach (var item in Items)
+            {
+                var category = Categories.FirstOrDefault(c => c.Id == item.CategoryId);
+                category?.Items.Add(item);
+                item.Category = category;
+            }
+            // Связываем Batches с Items
+            foreach (var batch in Batches)
+            {
+                var item = Items.FirstOrDefault(i => i.Id == batch.ItemId);
+                item?.Batches.Add(batch);
+                batch.Item = item;
+            }
         }
 
         // ========== CATEGORY ==========
@@ -53,8 +68,10 @@ namespace TreeViewCrud.Services
         // ========== ITEM ==========
         public void AddItem(Item item)
         {
-            int newId = _repo.Add(item);
+            _repo.Add(item);
             Items.Add(item);
+            var category = Categories.FirstOrDefault(c => c.Id == item.CategoryId);
+            category?.Items.Add(item);
         }
 
         public void UpdateItem(Item item)
@@ -69,6 +86,8 @@ namespace TreeViewCrud.Services
         {
             _repo.Delete(item);
             Items.Remove(item);
+            var category = Categories.FirstOrDefault(c => c.Id == item.CategoryId);
+            category?.Items.Remove(item);
         }
 
         // ========== BATCH ==========
@@ -76,6 +95,8 @@ namespace TreeViewCrud.Services
         {
             int newId = _repo.Add(batch);
             Batches.Add(batch);
+            var item = Items.FirstOrDefault(c => c.Id == batch.ItemId);
+            item?.Batches.Add(batch);
         }
 
         public void UpdateBatch(Batch batch)
@@ -90,6 +111,8 @@ namespace TreeViewCrud.Services
         {
             _repo.Delete(batch);
             Batches.Remove(batch);
+            var item = Items.FirstOrDefault(c => c.Id == batch.ItemId);
+            item?.Batches.Remove(batch);
         }
 
         // Если нужно получить элементы по родительскому ID (например, Items категории)

@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.ObjectModel;
+
 namespace TreeViewCrud.Models;
 public class Item : EntityBase
 {
@@ -11,7 +13,8 @@ public class Item : EntityBase
     private int _categoryId;
     private int _manufacturerId;
     private int _unitId;
-
+    public virtual Category Category { get; set; }
+    public virtual ObservableCollection<Batch> Batches { get; set; } = new();
     public int ItemId
     {
         get => _itemId;

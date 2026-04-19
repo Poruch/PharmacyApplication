@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace TreeViewCrud.Attributes
 {
-    // Атрибут для указания имени таблицы в БД
     [AttributeUsage(AttributeTargets.Class)]
     public class TableAttribute : Attribute
     {
@@ -14,11 +13,10 @@ namespace TreeViewCrud.Attributes
         public TableAttribute(string name) => Name = name;
     }
 
-    // Атрибут для указания, что свойство — первичный ключ (обычно Id, но можно переопределить)
     [AttributeUsage(AttributeTargets.Property)]
     public class KeyAttribute : Attribute { }
 
-    // Атрибут для явного указания имени столбца (если отличается от имени свойства)
+
     [AttributeUsage(AttributeTargets.Property)]
     public class ColumnAttribute : Attribute
     {

@@ -12,6 +12,7 @@ public class Batch : EntityBase
     private int _itemId;
     private int _supplierId;
     private int _locationId;
+    public virtual Item Item { get; set; }
 
     public int BatchId
     {
