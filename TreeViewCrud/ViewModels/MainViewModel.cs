@@ -93,7 +93,7 @@ public class MainViewModel : ViewModelBase
     private void AddItem(object parameter)
     {
         var category = SelectedItem as Category;
-        var window = new ItemWindow(category.Id) { Owner = Application.Current.MainWindow };
+        var window = new ItemWindow(category.CategoryId) { Owner = Application.Current.MainWindow };
         if (window.ShowDialog() == true)
         {
             var newItem = new Item
@@ -102,8 +102,10 @@ public class MainViewModel : ViewModelBase
                 MnfName = window.ItemMnfName,
                 Dosage = window.ItemDosage,
                 Form = window.ItemForm,
+                ManufacturerId = window.ItemManufacturerId,
+                UnitId = window.ItemUnitId,
                 PrescriptionRequired = window.ItemPrescriptionRequired,
-                CategoryId = window.CategoryId   // теперь есть такое свойство
+                CategoryId = window.CategoryId
             };
             _dataService.AddItem(newItem);
             category.Items ??= new ObservableCollection<Item>();
@@ -116,7 +118,7 @@ public class MainViewModel : ViewModelBase
     private void AddBatch(object parameter)
     {
         var item = SelectedItem as Item;
-        var window = new BatchWindow(item.Id) { Owner = Application.Current.MainWindow };
+        var window = new BatchWindow(item.ItemId) { Owner = Application.Current.MainWindow };
         if (window.ShowDialog() == true)
         {
             var newBatch = new Batch
@@ -185,7 +187,7 @@ public class MainViewModel : ViewModelBase
             {
                 _dataService.DeleteItem(item);
                 // удаляем из коллекции категории
-                var category = Categories.FirstOrDefault(c => c.Id == item.CategoryId);
+                var category = Categories.FirstOrDefault(c => c.CategoryId == item.CategoryId);
                 category?.Items?.Remove(item);
                 if (SelectedItem == item) SelectedItem = null;
                 OnPropertyChanged(nameof(Categories));
@@ -197,7 +199,7 @@ public class MainViewModel : ViewModelBase
                                 MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
             {
                 _dataService.DeleteBatch(batch);
-                var itemb = Categories.SelectMany(c => c.Items).FirstOrDefault(i => i.Id == batch.ItemId);
+                var itemb = Categories.SelectMany(c => c.Items).FirstOrDefault(i => i.ItemId == batch.ItemId);
                 itemb?.Batches?.Remove(batch);
                 if (SelectedItem == batch) SelectedItem = null;
                 OnPropertyChanged(nameof(Categories));

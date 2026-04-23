@@ -1,6 +1,7 @@
 ﻿
 using System.Collections.ObjectModel;
-using TreeViewCrud.Attributes;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 namespace TreeViewCrud.Models;
 [Table("Category")]
 public class Category : EntityBase
@@ -9,6 +10,8 @@ public class Category : EntityBase
     private string _name = null!;
     private string? _description;
     public virtual ObservableCollection<Item> Items { get; set; } = new();
+    [Key]
+    [Column("CategoryId")]
     public int CategoryId
     {
         get => _categoryId;

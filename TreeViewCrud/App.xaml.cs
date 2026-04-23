@@ -13,6 +13,7 @@ namespace TreeViewCrud
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+            //DatabaseInitializer.DropAllTables();
             DatabaseInitializer.EnsureDatabaseCreated();
         }
     }

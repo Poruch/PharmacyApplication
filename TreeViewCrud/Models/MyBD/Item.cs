@@ -1,7 +1,10 @@
 ﻿
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace TreeViewCrud.Models;
+[Table("Item")]
 public class Item : EntityBase
 {
     private int _itemId;
@@ -15,12 +18,13 @@ public class Item : EntityBase
     private int _unitId;
     public virtual Category Category { get; set; }
     public virtual ObservableCollection<Batch> Batches { get; set; } = new();
+    [Key, Column("ItemId")]
     public int ItemId
     {
         get => _itemId;
         set => _itemId = value;
     }
-
+    [Column("Name")]
     public string Name
     {
         get => _name;
@@ -31,30 +35,34 @@ public class Item : EntityBase
             _name = value;
         }
     }
-
+    [Column("MnfName")]
     public string? MnfName
     {
         get => _mnfName;
         set => _mnfName = value;
     }
+    [Column("Dosage")]
 
     public string? Dosage
     {
         get => _dosage;
         set => _dosage = value;
     }
+    [Column("Form")]
 
     public string? Form
     {
         get => _form;
         set => _form = value;
     }
+    [Column("PrescriptionRequired")]
 
     public bool PrescriptionRequired
     {
         get => _prescriptionRequired;
         set => _prescriptionRequired = value;
     }
+    [Column("CategoryId")]
 
     public int CategoryId
     {
@@ -66,6 +74,7 @@ public class Item : EntityBase
             _categoryId = value;
         }
     }
+    [Column("ManufacturerId")]
 
     public int ManufacturerId
     {
@@ -77,6 +86,7 @@ public class Item : EntityBase
             _manufacturerId = value;
         }
     }
+    [Column("UnitId")]
 
     public int UnitId
     {

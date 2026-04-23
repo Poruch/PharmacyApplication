@@ -1,6 +1,9 @@
 ﻿
-namespace TreeViewCrud.Models;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
+namespace TreeViewCrud.Models;
+[Table("AuditLog")]
 public class AuditLog
 {
     private int _logId;
@@ -12,12 +15,14 @@ public class AuditLog
     private DateTime _timestamp;
     private string? _ipAddress;
     private int _userId;
-
+    [Column("LogId")]
+    [Key]
     public int LogId
     {
         get => _logId;
         set => _logId = value;
     }
+    [Column("Action")]
 
     public string Action
     {
@@ -29,6 +34,7 @@ public class AuditLog
             _action = value;
         }
     }
+    [Column("TableName")]
 
     public string TableName
     {
@@ -40,36 +46,42 @@ public class AuditLog
             _tableName = value;
         }
     }
+    [Column("RecordId")]
 
     public int? RecordId
     {
         get => _recordId;
         set => _recordId = value;
     }
+    [Column("OldValue")]
 
     public string? OldValue
     {
         get => _oldValue;
         set => _oldValue = value;
     }
+    [Column("NewValue")]
 
     public string? NewValue
     {
         get => _newValue;
         set => _newValue = value;
     }
+    [Column("Timestamp")]
 
     public DateTime Timestamp
     {
         get => _timestamp;
         set => _timestamp = value;
     }
+    [Column("IpAddress")]
 
     public string? IpAddress
     {
         get => _ipAddress;
         set => _ipAddress = value;
     }
+    [Column("UserId")]
 
     public int UserId
     {

@@ -1,5 +1,9 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
 namespace TreeViewCrud.Models;
+[Table("AppUser")]
 public class AppUser
 {
     private int _userId;
@@ -9,12 +13,14 @@ public class AppUser
     private string _login = null!;
     private string _passwordHash = null!;
     private string _role = null!;
+    [Key, Column("UserId")]
 
     public int UserId
     {
         get => _userId;
         set => _userId = value;
     }
+    [Column("LastName")]
 
     public string LastName
     {
@@ -26,6 +32,7 @@ public class AppUser
             _lastName = value;
         }
     }
+    [Column("FirstName")]
 
     public string FirstName
     {
@@ -37,12 +44,14 @@ public class AppUser
             _firstName = value;
         }
     }
+    [Column("Patronymic")]
 
     public string? Patronymic
     {
         get => _patronymic;
         set => _patronymic = value;
     }
+    [Column("Login")]
 
     public string Login
     {
@@ -54,6 +63,7 @@ public class AppUser
             _login = value;
         }
     }
+    [Column("PasswordHash")]
 
     public string PasswordHash
     {
@@ -65,6 +75,7 @@ public class AppUser
             _passwordHash = value;
         }
     }
+    [Column("Role")]
 
     public string Role
     {

@@ -15,9 +15,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<UseWPF>true</UseWPF>
 	</PropertyGroup>
-	<ItemGroup>
-		<Folder Include="UserControls\" />
-	</ItemGroup>
 	<ItemGroup Condition="$(VisualStudioVersion) == '17.0'">
 
 		<Reference Include="Microsoft.Data.Tools.Schema.Sql.UnitTesting, Version=17.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -32,6 +29,14 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Data.SqlClient" Version="5.1.4" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.7" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="10.0.7" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Resource Include="appsettings.json" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Attributes\" />
 	</ItemGroup>
 	<PropertyGroup>
 		<SsdtUnitTestVersion>3.1</SsdtUnitTestVersion>

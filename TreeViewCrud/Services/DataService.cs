@@ -6,7 +6,7 @@ namespace TreeViewCrud.Services
 {
     public class DataService
     {
-        private string _connectionString = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=\"F:\\Вшэ\\2 курс\\КПО\\TreeViewCrud\\TreeViewCrud\\PharmacyDB.mdf\";Integrated Security=True";
+        private string _connectionString = ConfigManager.ConnectionString;
         private readonly EntityRepository _repo;
 
         // Локальные коллекции, которые будут привязаны к TreeView
@@ -30,14 +30,14 @@ namespace TreeViewCrud.Services
             // Связываем Items с категориями
             foreach (var item in Items)
             {
-                var category = Categories.FirstOrDefault(c => c.Id == item.CategoryId);
+                var category = Categories.FirstOrDefault(c => c.CategoryId == item.CategoryId);
                 category?.Items.Add(item);
                 item.Category = category;
             }
             // Связываем Batches с Items
             foreach (var batch in Batches)
             {
-                var item = Items.FirstOrDefault(i => i.Id == batch.ItemId);
+                var item = Items.FirstOrDefault(i => i.ItemId == batch.ItemId);
                 item?.Batches.Add(batch);
                 batch.Item = item;
             }
@@ -54,7 +54,7 @@ namespace TreeViewCrud.Services
         {
             _repo.Update(category);
             // Заменяем элемент в коллекции (чтобы вызвать обновление в UI)
-            var index = Categories.IndexOf(Categories.FirstOrDefault(c => c.Id == category.Id));
+            var index = Categories.IndexOf(Categories.FirstOrDefault(c => c.CategoryId == category.CategoryId));
             if (index != -1)
                 Categories[index] = category;
         }
@@ -70,14 +70,14 @@ namespace TreeViewCrud.Services
         {
             _repo.Add(item);
             Items.Add(item);
-            var category = Categories.FirstOrDefault(c => c.Id == item.CategoryId);
+            var category = Categories.FirstOrDefault(c => c.CategoryId == item.CategoryId);
             category?.Items.Add(item);
         }
 
         public void UpdateItem(Item item)
         {
             _repo.Update(item);
-            var index = Items.IndexOf(Items.FirstOrDefault(i => i.Id == item.Id));
+            var index = Items.IndexOf(Items.FirstOrDefault(i => i.ItemId == item.ItemId));
             if (index != -1)
                 Items[index] = item;
         }
@@ -86,7 +86,7 @@ namespace TreeViewCrud.Services
         {
             _repo.Delete(item);
             Items.Remove(item);
-            var category = Categories.FirstOrDefault(c => c.Id == item.CategoryId);
+            var category = Categories.FirstOrDefault(c => c.CategoryId == item.CategoryId);
             category?.Items.Remove(item);
         }
 
@@ -95,14 +95,14 @@ namespace TreeViewCrud.Services
         {
             int newId = _repo.Add(batch);
             Batches.Add(batch);
-            var item = Items.FirstOrDefault(c => c.Id == batch.ItemId);
+            var item = Items.FirstOrDefault(c => c.ItemId == batch.ItemId);
             item?.Batches.Add(batch);
         }
 
         public void UpdateBatch(Batch batch)
         {
             _repo.Update(batch);
-            var index = Batches.IndexOf(Batches.FirstOrDefault(b => b.Id == batch.Id));
+            var index = Batches.IndexOf(Batches.FirstOrDefault(b => b.BatchId == batch.BatchId));
             if (index != -1)
                 Batches[index] = batch;
         }
@@ -111,7 +111,7 @@ namespace TreeViewCrud.Services
         {
             _repo.Delete(batch);
             Batches.Remove(batch);
-            var item = Items.FirstOrDefault(c => c.Id == batch.ItemId);
+            var item = Items.FirstOrDefault(c => c.ItemId == batch.ItemId);
             item?.Batches.Remove(batch);
         }
 

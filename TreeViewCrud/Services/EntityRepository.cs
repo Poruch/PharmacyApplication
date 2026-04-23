@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
+using System.Reflection;
+using System.ComponentModel.DataAnnotations.Schema;
 using TreeViewCrud.Models;
 
 public class EntityRepository
@@ -19,7 +21,7 @@ public class EntityRepository
             cmd.Parameters.AddWithValue(p.Key, p.Value ?? DBNull.Value);
         conn.Open();
         int newId = Convert.ToInt32(cmd.ExecuteScalar());
-        entity.Id = newId;
+        entity.SetKeyValue(newId);
         return newId;
     }
 
@@ -37,39 +39,44 @@ public class EntityRepository
     public void Delete<T>(T entity) where T : EntityBase
     {
         string sql = entity.GenerateDeleteSql();
+        var parameters = entity.GetDeleteParameters();
         using var conn = new SqlConnection(_connectionString);
         using var cmd = new SqlCommand(sql, conn);
-        cmd.Parameters.AddWithValue("@Id", entity.Id);
+        foreach (var p in parameters)
+            cmd.Parameters.AddWithValue(p.Key, p.Value ?? DBNull.Value);
         conn.Open();
         cmd.ExecuteNonQuery();
     }
 
-    public void DeleteById<T>(int id) where T : EntityBase, new()
-    {
-        var dummy = new T { Id = id };
-        Delete(dummy);
-    }
+
 
     public List<T> GetAll<T>() where T : EntityBase, new()
     {
         var list = new List<T>();
-        var dummy = new T();
-        string sql = $"SELECT * FROM {dummy.GenerateDeleteSql().Split(' ')[2]}";
-        string tableName = dummy.GetTableName();
+        string tableName = EntityBase.GetTableName<T>();
+        string sql = $"SELECT * FROM {tableName}";
 
         using var conn = new SqlConnection(_connectionString);
-        using var cmd = new SqlCommand($"SELECT * FROM {tableName}", conn);
+        using var cmd = new SqlCommand(sql, conn);
         conn.Open();
         using var reader = cmd.ExecuteReader();
-        var properties = typeof(T).GetProperties().ToDictionary(p => p.Name);
+
+        // Берём только те свойства, которые помечены [Column]
+        var properties = typeof(T).GetProperties()
+            .Where(p => p.IsDefined(typeof(ColumnAttribute), inherit: true))
+            .ToDictionary(p => p.GetCustomAttribute<ColumnAttribute>()?.Name ?? p.Name, p => p);
+
         while (reader.Read())
         {
             var entity = new T();
-            foreach (var prop in typeof(T).GetProperties())
+            foreach (var (columnName, prop) in properties)
             {
-                if (reader[prop.Name] != DBNull.Value)
+                // Пытаемся прочитать колонку (предполагаем, что она есть в SELECT *)
+                object value = reader[columnName];
+                if (value != DBNull.Value)
                 {
-                    prop.SetValue(entity, Convert.ChangeType(reader[prop.Name], prop.PropertyType));
+                    var converted = Convert.ChangeType(value, prop.PropertyType);
+                    prop.SetValue(entity, converted);
                 }
             }
             list.Add(entity);

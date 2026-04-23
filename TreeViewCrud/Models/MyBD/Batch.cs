@@ -1,5 +1,9 @@
 ﻿
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+
 namespace TreeViewCrud.Models;
+[Table("Batch")]
 public class Batch : EntityBase
 {
     private int _batchId;
@@ -13,12 +17,14 @@ public class Batch : EntityBase
     private int _supplierId;
     private int _locationId;
     public virtual Item Item { get; set; }
+    [Key, Column("BatchId")]
 
     public int BatchId
     {
         get => _batchId;
         set => _batchId = value;
     }
+    [Column("SerialNumber")]
 
     public string SerialNumber
     {
@@ -30,18 +36,21 @@ public class Batch : EntityBase
             _serialNumber = value;
         }
     }
+    [Column("ProductionDate")]
 
     public DateTime ProductionDate
     {
         get => _productionDate;
         set => _productionDate = value;
     }
+    [Column("ExpiryDate")]
 
     public DateTime? ExpiryDate
     {
         get => _expiryDate;
         set => _expiryDate = value;
     }
+    [Column("PurchasePrice")]
 
     public decimal PurchasePrice
     {
@@ -53,6 +62,7 @@ public class Batch : EntityBase
             _purchasePrice = value;
         }
     }
+    [Column("SellingPrice")]
 
     public decimal SellingPrice
     {
@@ -64,6 +74,7 @@ public class Batch : EntityBase
             _sellingPrice = value;
         }
     }
+    [Column("Quantity")]
 
     public int Quantity
     {
@@ -75,6 +86,7 @@ public class Batch : EntityBase
             _quantity = value;
         }
     }
+    [Column("ItemId")]
 
     public int ItemId
     {
@@ -86,6 +98,7 @@ public class Batch : EntityBase
             _itemId = value;
         }
     }
+    [Column("SupplierId")]
 
     public int SupplierId
     {
@@ -97,6 +110,7 @@ public class Batch : EntityBase
             _supplierId = value;
         }
     }
+    [Column("LocationId")]
 
     public int LocationId
     {
