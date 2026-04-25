@@ -106,10 +106,9 @@ public class MainViewModel : ViewModelBase
                 UnitId = window.ItemUnitId,
                 PrescriptionRequired = window.ItemPrescriptionRequired,
                 CategoryId = window.CategoryId
+
             };
             _dataService.AddItem(newItem);
-            category.Items ??= new ObservableCollection<Item>();
-            category.Items.Add(newItem);
             OnPropertyChanged(nameof(Categories));
         }
     }
@@ -129,11 +128,11 @@ public class MainViewModel : ViewModelBase
                 PurchasePrice = window.BatchPurchasePrice,
                 SellingPrice = window.BatchSellingPrice,
                 Quantity = window.BatchQuantity,
-                ItemId = window.ItemId
+                ItemId = window.ItemId,
+                SupplierId = window.BatchSupplierId,
+                LocationId = window.BatchLocationId
             };
             _dataService.AddBatch(newBatch);
-            item.Batches ??= new ObservableCollection<Batch>();
-            item.Batches.Add(newBatch);
             OnPropertyChanged(nameof(Categories));
         }
     }

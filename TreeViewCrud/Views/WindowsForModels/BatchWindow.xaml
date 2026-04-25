@@ -1,7 +1,7 @@
 ﻿<Window x:Class="TreeViewCrud.Views.BatchWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Партия" Height="600" Width="500"
+        Title="Партия" Height="828" Width="500"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         Background="#F0F0F0" x:Name="BatchWindowControl">
     <Grid Margin="20">
