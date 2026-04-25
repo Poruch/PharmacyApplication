@@ -22,7 +22,7 @@ public class AppUser
     }
     [Column("LastName")]
 
-    public string LastName
+    public string? LastName
     {
         get => _lastName;
         set
@@ -34,7 +34,7 @@ public class AppUser
     }
     [Column("FirstName")]
 
-    public string FirstName
+    public string? FirstName
     {
         get => _firstName;
         set
@@ -88,7 +88,12 @@ public class AppUser
             _role = value;
         }
     }
-
+    [Column("Salt")]
+    public string Salt { get; set; } = null!;
+    [Column("IsActive")]
+    public bool IsActive { get; set; } = true;
+    [Column("RegistrationDate")]
+    public DateTime RegistrationDate { get; set; } = DateTime.Now;
     public AppUser() { }
 
     public AppUser(string lastName, string firstName, string login, string passwordHash, string role,
