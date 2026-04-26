@@ -7,7 +7,6 @@ public class AppUserDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        // Используем строку подключения из вашего ConfigManager
         optionsBuilder.UseSqlServer(ConfigManager.ConnectionString);
     }
 }

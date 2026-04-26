@@ -6,36 +6,86 @@
     xmlns:local="clr-namespace:TreeViewCrud.ViewModels"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="clr-namespace:TreeViewCrud.Models"
-    Title="Управление аптечным складом"
-    Width="900"
-    Height="600"
-    FontSize="14"
+    Title="ФармСклад - Управление аптечным складом"
+    Width="1000"
+    Height="700"
+    Background="#F4F7FB"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
-    <Window.DataContext>
-        <local:MainViewModel />
-    </Window.DataContext>
-
     <Window.Resources>
-        <!--  Шаблон для Batch (3 уровень)  -->
-        <HierarchicalDataTemplate DataType="{x:Type models:Batch}">
+        <!--  Кисти и стили  -->
+        <SolidColorBrush x:Key="AccentBrush" Color="#2C7BE5" />
+        <SolidColorBrush x:Key="AccentLightBrush" Color="#E8F0FE" />
+        <SolidColorBrush x:Key="SuccessBrush" Color="#2E7D32" />
+        <SolidColorBrush x:Key="WarningBrush" Color="#ED6C02" />
+        <SolidColorBrush x:Key="ErrorBrush" Color="#D32F2F" />
+
+        <DropShadowEffect
+            x:Key="CardShadow"
+            BlurRadius="6"
+            Opacity="0.15"
+            ShadowDepth="2"
+            Color="Gray" />
+        <DropShadowEffect
+            x:Key="ButtonShadow"
+            BlurRadius="3"
+            Opacity="0.2"
+            ShadowDepth="1" />
+
+        <!--  Стиль для кнопок панели управления  -->
+        <Style x:Key="ActionButton" TargetType="Button">
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Margin" Value="0,6" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Effect" Value="{StaticResource ButtonShadow}" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Opacity" Value="0.9" />
+                    <Setter Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect
+                                BlurRadius="5"
+                                Opacity="0.3"
+                                ShadowDepth="2" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!--  Стиль для TreeViewItem  -->
+        <Style TargetType="TreeViewItem">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="4" />
+            <Setter Property="Margin" Value="2,0" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        </Style>
+        <HierarchicalDataTemplate DataType="{x:Type models:Category}" ItemsSource="{Binding Items}">
             <Border
-                Margin="2"
-                Padding="5"
-                BorderBrush="LightGray"
+                Margin="4"
+                Padding="10,8"
+                Background="#E3F2FD"
+                BorderBrush="#90CAF9"
                 BorderThickness="1"
-                CornerRadius="3">
+                CornerRadius="8">
                 <StackPanel>
-                    <TextBlock FontWeight="Bold" Text="{Binding SerialNumber}" />
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Foreground="Gray" Text="Срок годности: " />
-                        <TextBlock Text="{Binding ExpiryDate, StringFormat=d}" />
+                        <TextBlock FontSize="16" Text="📁 " />
+                        <TextBlock
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Foreground="#1565C0"
+                            Text="{Binding Name}" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Foreground="Gray" Text="Цена: " />
-                        <TextBlock Text="{Binding SellingPrice, StringFormat=C}" />
-                    </StackPanel>
+                    <TextBlock
+                        Margin="26,2,0,0"
+                        FontSize="12"
+                        Foreground="#546E7A"
+                        Text="{Binding Items.Count, StringFormat='📦 Товаров: {0}'}" />
                 </StackPanel>
             </Border>
         </HierarchicalDataTemplate>
@@ -43,88 +93,190 @@
         <!--  Шаблон для Item (2 уровень)  -->
         <HierarchicalDataTemplate DataType="{x:Type models:Item}" ItemsSource="{Binding Batches}">
             <Border
-                Margin="2"
-                Padding="5"
-                Background="LightYellow"
-                BorderBrush="Gray"
+                Margin="4"
+                Padding="8"
+                Background="#FFF8E1"
+                BorderBrush="#FFE082"
                 BorderThickness="1"
-                CornerRadius="3">
+                CornerRadius="6">
                 <StackPanel>
-                    <TextBlock FontWeight="Bold" Text="{Binding Name}" />
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Foreground="Gray" Text="Дозировка: " />
-                        <TextBlock Text="{Binding Dosage}" />
+                        <TextBlock FontSize="14" Text="💊 " />
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Foreground="#E65100"
+                            Text="{Binding Name}" />
                     </StackPanel>
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Foreground="Gray" Text="Рецепт: " />
-                        <TextBlock Text="{Binding PrescriptionRequired, StringFormat=Требуется|Не требуется}" />
-                    </StackPanel>
+                    <TextBlock
+                        Margin="20,2,0,0"
+                        FontSize="11"
+                        Foreground="#795548"
+                        Text="{Binding Dosage, StringFormat='Доза: {0}'}" />
+                    <TextBlock
+                        Margin="20,0,0,0"
+                        FontSize="11"
+                        Foreground="#795548">
+                        <Run Text="Рецепт: " />
+                        <Run FontWeight="Bold" Text="{Binding PrescriptionRequired, StringFormat=Требуется|Не требуется}" />
+                    </TextBlock>
                 </StackPanel>
             </Border>
         </HierarchicalDataTemplate>
 
-        <!--  Шаблон для Category (1 уровень)  -->
-        <HierarchicalDataTemplate DataType="{x:Type models:Category}" ItemsSource="{Binding Items}">
+        <!--  Шаблон для Batch (3 уровень)  -->
+        <HierarchicalDataTemplate DataType="{x:Type models:Batch}">
             <Border
-                Margin="2"
-                Padding="8"
-                Background="LightBlue"
-                BorderBrush="DarkBlue"
-                BorderThickness="2"
+                Margin="4"
+                Padding="6"
+                Background="#F5F5F5"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1"
                 CornerRadius="5">
                 <StackPanel>
-                    <TextBlock
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Text="{Binding Name}" />
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Foreground="Gray" Text="Товаров: " />
-                        <TextBlock FontWeight="Bold" Text="{Binding Items.Count}" />
+                        <TextBlock FontSize="12" Text="🏷️ " />
+                        <TextBlock
+                            FontWeight="SemiBold"
+                            Foreground="#37474F"
+                            Text="{Binding SerialNumber}" />
                     </StackPanel>
+                    <TextBlock
+                        Margin="18,2,0,0"
+                        FontSize="11"
+                        Foreground="#607D8B">
+                        <Run Text="Годен до: " /><Run Text="{Binding ExpiryDate, StringFormat=d}" />
+                    </TextBlock>
+                    <TextBlock
+                        Margin="18,0,0,0"
+                        FontSize="11"
+                        Foreground="#607D8B">
+                        <Run Text="Цена: " /><Run
+                             FontWeight="Bold"
+                             Foreground="#2E7D32"
+                             Text="{Binding SellingPrice, StringFormat=C}" />
+                    </TextBlock>
                 </StackPanel>
             </Border>
         </HierarchicalDataTemplate>
     </Window.Resources>
 
-    <Grid Margin="10">
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!--  Изменённая строка 0  -->
-        <Grid Grid.Row="0" Margin="0,0,0,20">
-            <TextBlock
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontSize="24"
-                FontWeight="Bold"
-                Text="Управление аптечным складом" />
-            <StackPanel
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Orientation="Horizontal">
-                <TextBlock
-                    x:Name="UserInfo"
-                    Margin="0,0,10,0"
-                    VerticalAlignment="Center" />
-                <Button
-                    x:Name="LogoutButton"
-                    Width="70"
-                    Height="25"
-                    Click="LogoutButton_Click"
-                    Content="Выйти" />
-            </StackPanel>
-        </Grid>
+        <!--  Верхняя панель с заголовком и пользователем  -->
+        <Border
+            Grid.Row="0"
+            Margin="0,0,0,15"
+            Padding="15,10"
+            Background="White"
+            CornerRadius="8"
+            Effect="{StaticResource CardShadow}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
+                <!--  Первая строка: заголовок  -->
+                <StackPanel
+                    Grid.Row="0"
+                    Margin="0,0,0,8"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        FontSize="22"
+                        FontWeight="Bold"
+                        Foreground="#2C3E50"
+                        Text="🏥 ФармСклад" />
+                    <TextBlock
+                        Margin="10,0,0,0"
+                        VerticalAlignment="Bottom"
+                        FontSize="16"
+                        Foreground="#7F8C8D"
+                        Text=" | Управление аптечным складом" />
+                </StackPanel>
+
+                <!--  Вторая строка: пользователь и кнопки  -->
+                <StackPanel
+                    Grid.Row="1"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <Border
+                        Margin="0,0,15,0"
+                        Padding="12,6"
+                        Background="#E8F0FE"
+                        CornerRadius="20">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="{StaticResource AccentBrush}" Text="👤 " />
+                            <TextBlock
+                                x:Name="UserInfo"
+                                FontWeight="SemiBold"
+                                Foreground="#2C3E50" />
+                        </StackPanel>
+                    </Border>
+                    <Button
+                        x:Name="ExportJson"
+                        Width="100"
+                        Height="32"
+                        Background="#E10ddd"
+                        BorderThickness="0"
+                        Command="{Binding ExportToJson}"
+                        Content="ToJSON"
+                        Cursor="Hand"
+                        Foreground="White" />
+                    <Button
+                        x:Name="ExportXml"
+                        Width="100"
+                        Height="32"
+                        Margin="5,0,10,0"
+                        Background="#E10ddd"
+                        BorderThickness="0"
+                        Command="{Binding ExportToXml}"
+                        Content="ToXML"
+                        Cursor="Hand"
+                        Foreground="White" />
+                    <Button
+                        x:Name="UsersButton"
+                        Width="100"
+                        Height="32"
+                        Margin="0,0,10,0"
+                        Background="#4CAF50"
+                        BorderThickness="0"
+                        Click="UsersButton_Click"
+                        Content="👥 Пользователи"
+                        Cursor="Hand"
+                        Foreground="White"
+                        Visibility="Collapsed" />
+                    <Button
+                        x:Name="LogoutButton"
+                        Width="80"
+                        Height="32"
+                        Background="#E74C3C"
+                        BorderThickness="0"
+                        Click="LogoutButton_Click"
+                        Content="Выйти"
+                        Cursor="Hand"
+                        Foreground="White" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!--  Основная область  -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="10" />
-                <ColumnDefinition Width="300" />
+                <ColumnDefinition Width="8" />
+                <ColumnDefinition Width="320" />
             </Grid.ColumnDefinitions>
 
-            <!--  TreeView  -->
+            <!--  Карточка TreeView  -->
             <Border
                 Grid.Column="0"
                 Padding="5"
@@ -132,96 +284,230 @@
                 BorderThickness="1">
                 <TreeView
                     x:Name="MainTreeView"
+                    AllowDrop="True"
+                    DragEnter="TreeView_DragEnter"
+                    DragOver="TreeView_DragOver"
+                    Drop="TreeView_Drop"
                     ItemsSource="{Binding Categories}"
-                    SelectedItemChanged="TreeView_SelectedItemChanged" />
+                    PreviewMouseMove="TreeView_PreviewMouseMove">
+                    <TreeView.ItemContainerStyle>
+                        <Style TargetType="TreeViewItem">
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                        </Style>
+                    </TreeView.ItemContainerStyle>
+                </TreeView>
             </Border>
 
             <GridSplitter
                 Grid.Column="1"
-                Width="3"
+                Width="8"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Stretch"
-                Background="LightGray" />
+                Background="Transparent"
+                ResizeBehavior="PreviousAndNext" />
 
             <!--  Панель управления  -->
             <Border
                 Grid.Column="2"
-                Padding="10"
-                BorderBrush="Black"
-                BorderThickness="1">
-                <StackPanel>
-                    <TextBlock
-                        Margin="0,0,0,15"
-                        FontSize="16"
-                        FontWeight="Bold"
-                        Text="Управление" />
+                Padding="16"
+                Background="White"
+                CornerRadius="8"
+                Effect="{StaticResource CardShadow}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock
+                            Margin="0,0,0,12"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="#2C3E50"
+                            Text="Управление данными" />
 
-                    <!--  Информация о выбранном элементе  -->
-                    <Border
-                        Margin="0,0,0,15"
-                        Padding="5"
-                        Background="LightGray">
-                        <StackPanel>
-                            <TextBlock FontWeight="Bold" Text="Выбрано:" />
-                            <TextBlock
-                                Margin="0,5,0,0"
-                                Text="{Binding SelectedItemInfo}"
-                                TextWrapping="Wrap" />
-                        </StackPanel>
-                    </Border>
+                        <!--  Информация о выбранном элементе  -->
+                        <Border
+                            Margin="0,0,0,15"
+                            Padding="12"
+                            Background="#F8F9FA"
+                            CornerRadius="8">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,6"
+                                    FontWeight="SemiBold"
+                                    Foreground="#6C757D"
+                                    Text="📌 Выбрано" />
+                                <TextBlock
+                                    FontSize="13"
+                                    Foreground="#2C3E50"
+                                    Text="{Binding SelectedItemInfo}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </Border>
 
-                    <!--  Кнопки управления  -->
-                    <Button
-                        Height="40"
-                        Margin="0,5"
-                        Background="LightGreen"
-                        Command="{Binding AddCategoryCommand}"
-                        Content="➕ Добавить категорию"
-                        FontSize="14" />
+                        <!--  Кнопки действий  -->
+                        <Button
+                            Background="{StaticResource AccentBrush}"
+                            Command="{Binding AddCategoryCommand}"
+                            Style="{StaticResource ActionButton}">
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock Margin="0,0,5,0" Text="➕ " />
+                                <TextBlock Text="Добавить категорию" />
+                            </StackPanel>
+                        </Button>
 
-                    <Button
-                        Height="40"
-                        Margin="0,5"
-                        Background="LightGreen"
-                        Command="{Binding AddItemCommand}"
-                        Content="📦 Добавить товар"
-                        FontSize="14" />
+                        <Button
+                            Background="#2196F3"
+                            Command="{Binding AddItemCommand}"
+                            Style="{StaticResource ActionButton}">
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock Margin="0,0,5,0" Text="💊 " />
+                                <TextBlock Text="Добавить товар" />
+                            </StackPanel>
+                        </Button>
 
-                    <Button
-                        Height="40"
-                        Margin="0,5"
-                        Background="LightGreen"
-                        Command="{Binding AddBatchCommand}"
-                        Content="📦 Добавить партию"
-                        FontSize="14" />
+                        <Button
+                            Background="#00BCD4"
+                            Command="{Binding AddBatchCommand}"
+                            Style="{StaticResource ActionButton}">
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock Margin="0,0,5,0" Text="📦 " />
+                                <TextBlock Text="Добавить партию" />
+                            </StackPanel>
+                        </Button>
 
-                    <Button
-                        Height="40"
-                        Margin="0,5"
-                        Background="LightBlue"
-                        Command="{Binding EditCommand}"
-                        Content="✏️ Редактировать"
-                        FontSize="14" />
+                        <Separator
+                            Height="1"
+                            Margin="0,10,0,10"
+                            Background="#E9ECEF" />
 
-                    <Button
-                        Height="40"
-                        Margin="0,5"
-                        Background="LightCoral"
-                        Command="{Binding DeleteCommand}"
-                        Content="❌ Удалить"
-                        FontSize="14" />
+                        <Button
+                            Background="#FF9800"
+                            Command="{Binding EditCommand}"
+                            Style="{StaticResource ActionButton}">
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock Margin="0,0,5,0" Text="✏️ " />
+                                <TextBlock Text="Редактировать" />
+                            </StackPanel>
+                        </Button>
 
-                    <Border
-                        Margin="0,20,0,0"
-                        Padding="5"
-                        Background="LightYellow">
-                        <TextBlock TextWrapping="Wrap">
-                            1. Выберите категорию → добавить товар
-                            2. Выберите товар → добавить партию, редактировать, удалить
-                            3. Выберите партию → редактировать, удалить
-                        </TextBlock>
-                    </Border>
-                </StackPanel>
+                        <Button
+                            Background="#F44336"
+                            Command="{Binding DeleteCommand}"
+                            Style="{StaticResource ActionButton}">
+                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                <TextBlock Margin="0,0,5,0" Text="🗑️ " />
+                                <TextBlock Text="Удалить" />
+                            </StackPanel>
+                        </Button>
+
+                        <Border
+                            Margin="0,20,0,0"
+                            Padding="12"
+                            Background="#FFF3E0"
+                            CornerRadius="8">
+                            <StackPanel>
+                                <TextBlock
+                                    Margin="0,0,0,6"
+                                    FontWeight="Bold"
+                                    Foreground="#E65100"
+                                    Text="💡 Совет" />
+                                <TextBlock
+                                    FontSize="12"
+                                    Foreground="#BF360C"
+                                    TextWrapping="Wrap">
+                                    1. Выберите категорию → добавить товар
+                                    2. Выберите товар → добавить партию
+                                    3. Для редактирования или удаления выберите нужный элемент
+                                </TextBlock>
+                            </StackPanel>
+                        </Border>
+
+                        <Border
+                            Margin="0,20,0,0"
+                            Padding="12"
+                            Background="#E8F0FE"
+                            CornerRadius="8">
+                            <Expander
+                                Margin="0,20,0,0"
+                                Background="#E8F0FE"
+                                BorderBrush="Transparent"
+                                Foreground="#1565C0"
+                                Header="🏬 Операции (показать/скрыть)"
+                                IsExpanded="False">
+                                <Border
+                                    Padding="12"
+                                    Background="#E8F0FE"
+                                    CornerRadius="8">
+                                    <StackPanel>
+                                        <Button
+                                            Height="40"
+                                            Margin="0,6"
+                                            Background="#17A2B8"
+                                            Style="{StaticResource ActionButton}">
+                                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                <TextBlock Margin="0,0,5,0" Text="📦 " />
+                                                <TextBlock Text="Приемка товаров" />
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button
+                                            Height="40"
+                                            Margin="0,6"
+                                            Background="#28A745"
+                                            Style="{StaticResource ActionButton}">
+                                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                <TextBlock Margin="0,0,5,0" Text="💰 " />
+                                                <TextBlock Text="Продажи (касса)" />
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button
+                                            Height="40"
+                                            Margin="0,6"
+                                            Background="#FD7E14"
+                                            Style="{StaticResource ActionButton}">
+                                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                <TextBlock Margin="0,0,5,0" Text="🔄 " />
+                                                <TextBlock Text="Возвраты" />
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button
+                                            Height="40"
+                                            Margin="0,6"
+                                            Background="#6F42C1"
+                                            Style="{StaticResource ActionButton}">
+                                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                <TextBlock Margin="0,0,5,0" Text="🏷️ " />
+                                                <TextBlock Text="Управление ценами" />
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button
+                                            Height="40"
+                                            Margin="0,6"
+                                            Background="#E83E8C"
+                                            Style="{StaticResource ActionButton}">
+                                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                <TextBlock Margin="0,0,5,0" Text="🗑️ " />
+                                                <TextBlock Text="Списание товаров" />
+                                            </StackPanel>
+                                        </Button>
+
+                                        <Button
+                                            Height="40"
+                                            Margin="0,6"
+                                            Background="#20C997"
+                                            Style="{StaticResource ActionButton}">
+                                            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                                                <TextBlock Margin="0,0,5,0" Text="📊 " />
+                                                <TextBlock Text="Аналитика и отчеты" />
+                                            </StackPanel>
+                                        </Button>
+                                    </StackPanel>
+                                </Border>
+                            </Expander>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
             </Border>
         </Grid>
     </Grid>

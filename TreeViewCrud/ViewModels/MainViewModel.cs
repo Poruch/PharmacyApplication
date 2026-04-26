@@ -1,5 +1,9 @@
-﻿using System.Collections.ObjectModel;
+﻿using Microsoft.Win32;
+using System.Collections.ObjectModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using TreeViewCrud.Models;
 using TreeViewCrud.Services;
 using TreeViewCrud.Views;
@@ -44,6 +48,24 @@ public class MainViewModel : ViewModelBase
             return "Неизвестный тип";
         }
     }
+    public void MoveItemToCategory(Item item, Category targetCategory)
+    {
+        item.CategoryId = targetCategory.CategoryId;
+        _dataService.UpdateItem(item);
+        var oldCategory = Categories.FirstOrDefault(c => c.Items.Contains(item));
+        oldCategory?.Items.Remove(item);
+        targetCategory.Items.Add(item);
+    }
+
+    public void MoveBatchToItem(Batch batch, Item targetItem)
+    {
+        batch.ItemId = targetItem.ItemId;
+        _dataService.UpdateBatch(batch);
+        var oldItem = _dataService.Items.FirstOrDefault(i => i.Batches.Contains(batch));
+        oldItem?.Batches.Remove(batch);
+        targetItem.Batches.Add(batch);
+    }
+
 
     // Команды
     public RelayCommand AddCategoryCommand { get; }
@@ -51,7 +73,8 @@ public class MainViewModel : ViewModelBase
     public RelayCommand AddBatchCommand { get; }
     public RelayCommand EditCommand { get; }
     public RelayCommand DeleteCommand { get; }
-
+    public RelayCommand ExportToJson { get; }
+    public RelayCommand ExportToXml { get; }
     public MainViewModel()
     {
         try
@@ -69,8 +92,27 @@ public class MainViewModel : ViewModelBase
         AddBatchCommand = new RelayCommand(AddBatch, CanAddBatch);
         EditCommand = new RelayCommand(Edit, CanEditOrDelete);
         DeleteCommand = new RelayCommand(Delete, CanEditOrDelete);
+        ExportToJson = new RelayCommand(ExportToJSON);
+        ExportToXml = new RelayCommand(ExportToXML);
     }
-
+    private void ExportToJSON(object parameter)
+    {
+        var dialog = new SaveFileDialog { Filter = "JSON файлы|*.json", DefaultExt = "json" };
+        if (dialog.ShowDialog() == true)
+        {
+            ExportService.ExportToJson(dialog.FileName, Categories);
+            MessageBox.Show("Экспорт завершён", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+    }
+    private void ExportToXML(object parameter)
+    {
+        var dialog = new SaveFileDialog { Filter = "XML files (*.xml)|*.xml", DefaultExt = "xml" };
+        if (dialog.ShowDialog() == true)
+        {
+            ExportService.ExportToXml(dialog.FileName, Categories);
+            MessageBox.Show("Экспорт в XML выполнен.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+    }
     private bool CanAddItem(object parameter) => SelectedItem is Category;
     private bool CanAddBatch(object parameter) => SelectedItem is Item;
     private bool CanEditOrDelete(object parameter) => SelectedItem is Item || SelectedItem is Batch;
